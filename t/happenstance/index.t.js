@@ -1,5 +1,5 @@
 
-require('proof')(6, prove)
+require('proof')(7, prove)
 
 function prove (assert) {
     var Scheduler = require('../..')
@@ -45,4 +45,18 @@ function prove (assert) {
     assert(scheduler.check(), [], 'nothing happening')
     time++
     assert(scheduler.check(), [ 'a', 'b' ], 'something happening')
+
+    scheduler.schedule({
+        id: 'a',
+        delay: 1,
+        value: 'a'
+    })
+    scheduler.schedule({
+        id: 'b',
+        delay: [ 1, 1 ],
+        value: 'b'
+    })
+
+    scheduler.clear()
+    assert(scheduler.what, {}, 'clear')
 }

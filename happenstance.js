@@ -59,4 +59,9 @@ Scheduler.prototype.check = function () {
     return happening
 }
 
+Scheduler.prototype.clear = function () {
+    this.what = {}
+    this.when.clear()
+}
+
 module.exports = Scheduler
