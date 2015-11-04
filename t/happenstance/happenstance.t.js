@@ -14,12 +14,12 @@ function prove (assert) {
     var scheduler = new Scheduler({ Date: _Date })
 
     scheduler.schedule({
-        id: 'a',
+        key: 'a',
         delay: 1,
         value: 'a'
     })
     scheduler.schedule({
-        id: 'b',
+        key: 'b',
         delay: [ 1, 1 ],
         value: 'b'
     })
@@ -33,12 +33,12 @@ function prove (assert) {
     assert(scheduler.what, {}, 'empty')
 
     scheduler.schedule({
-        id: 'a',
+        key: 'a',
         delay: 1,
         value: 'a'
     })
     scheduler.schedule({
-        id: 'b',
+        key: 'b',
         delay: [ 1, 1 ],
         value: 'b'
     })
@@ -48,12 +48,12 @@ function prove (assert) {
     assert(scheduler.check(), [ 'a', 'b' ], 'something happening')
 
     scheduler.schedule({
-        id: 'a',
+        key: 'a',
         delay: 1,
         value: 'a'
     })
     scheduler.schedule({
-        id: 'b',
+        key: 'b',
         delay: [ 1, 1 ],
         value: 'b'
     })

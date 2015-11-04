@@ -16,7 +16,7 @@ Scheduler.prototype.delay = function (delay) {
 }
 
 Scheduler.prototype.schedule = function (event) {
-    this.unschedule(event.id)
+    this.unschedule(event.key)
 
     event.when = this._Date.now() + this.delay(event.delay)
     var date = this.when.find({ when: event.when })
@@ -25,15 +25,15 @@ Scheduler.prototype.schedule = function (event) {
         this.when.insert(date)
     }
     date.events.push(event)
-    this.what[event.id] = event
+    this.what[event.key] = event
 
     return event
 }
 
-Scheduler.prototype.unschedule = function (id) {
-    var scheduled = this.what[id]
+Scheduler.prototype.unschedule = function (key) {
+    var scheduled = this.what[key]
     if (scheduled) {
-        delete this.what[id]
+        delete this.what[key]
         var date = this.when.find({ when: scheduled.when })
         var index = date.events.indexOf(scheduled)
         assert(~index, 'cannot find scheduled event')
@@ -53,7 +53,7 @@ Scheduler.prototype.check = function () {
         }
         this.when.remove(date)
         date.events.forEach(function (event) {
-            delete this.what[event.id]
+            delete this.what[event.key]
             happening.push(event.value)
         }, this)
     }
