@@ -1,4 +1,3 @@
-
 require('proof')(7, prove)
 
 function prove (assert) {
