@@ -5,12 +5,14 @@ function prove (assert) {
     var Scheduler = require('../..')
 
     var time = 0
-    var clock = function () { return time }
+    var _Date = {
+        now: function () { return time }
+    }
 
     var scheduler = new Scheduler
-    assert(Date.now() - scheduler.clock() < 250, 'default clock')
+    assert(Date.now() - scheduler._Date.now() < 250, 'default clock')
 
-    var scheduler = new Scheduler(clock)
+    var scheduler = new Scheduler({ Date: _Date })
 
     scheduler.schedule({
         id: 'a',
