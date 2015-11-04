@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/bigeasy/happenstance.png?label=ready&title=Ready)](https://waffle.io/bigeasy/happenstance)
 [![Build Status](https://travis-ci.org/bigeasy/happenstance.svg?branch=master)](https://travis-ci.org/bigeasy/happenstance) [![Coverage Status](https://coveralls.io/repos/bigeasy/happenstance/badge.svg?branch=master&service=github)](https://coveralls.io/github/bigeasy/happenstance?branch=master)
 
 Happenstance is a scheduler. You put values in it. They come back out when the
