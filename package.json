@@ -25,7 +25,7 @@
     {
                     "test": "proof platform win32 && proof test */*/*.t.js || t/test"
     },
-    "licenses":     "MIT",
+    "license":      "MIT",
     "repository":
     {
                     "type": "git",
