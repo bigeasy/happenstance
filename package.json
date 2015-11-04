@@ -14,7 +14,7 @@
     ],
     "dependencies":
     {
-                    "bintrees": "1.0.0"
+                    "bintrees": "1.0.1"
     },
     "devDependencies":
     {
