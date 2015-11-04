@@ -48,7 +48,7 @@ after two and a half minutes
 c
 ```
 
-### `new Scheduler(options)`
+#### `new Scheduler(options)`
 
 Createa  new `Scheduler` object. The only option is `Date` which lets you
 specify an implementation of `Date.now` so you can control the `Scheduler`
@@ -72,7 +72,7 @@ assert(scheduler.check()[0], 1)
 This is the reason I created this library, to test scheduled events and the
 passage of time.
 
-### `scheduler.schedule(options)`
+#### `scheduler.schedule(options)`
 
 Options are:
 
@@ -81,11 +81,11 @@ Options are:
  * `delay` the amount of time to wait, either an exact value or a range if
  you're trying to stagger events.
 
-### `scheduler.unschedule(key)`
+#### `scheduler.unschedule(key)`
 
 Unschedule the event with the given key.
 
 
-### `scheduler.clear()`
+#### `scheduler.clear()`
 
 Clear all scheduled events.
