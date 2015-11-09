@@ -14,7 +14,8 @@
     ],
     "dependencies":
     {
-                    "bintrees": "1.0.1"
+                    "bintrees": "1.0.1",
+                    "seedrandom": "2.4.2"
     },
     "devDependencies":
     {

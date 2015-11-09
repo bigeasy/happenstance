@@ -1,24 +1,16 @@
 var RBTree = require('bintrees').RBTree
 var assert = require('assert')
 
-function Scheduler (options) {
-    options || (options = {})
-    this._Date = options.Date || Date
+function Scheduler (seed) {
     this.what = {}
     this.when = new RBTree(function (a, b) { return a.when - b.when })
 }
 
-Scheduler.prototype.delay = function (delay) {
-    if (typeof delay == 'number') {
-        delay = [ delay, delay ]
-    }
-    return Math.floor(Math.random() * (delay[1] - delay[0])) + delay[0]
-}
+Scheduler.prototype.schedule = function (key, value, when) {
+    var event = { key: key, value: value, when: when }
 
-Scheduler.prototype.schedule = function (event) {
     this.unschedule(event.key)
 
-    event.when = this._Date.now() + this.delay(event.delay)
     var date = this.when.find({ when: event.when })
     if (date == null) {
         date = { when: event.when, events: [] }
@@ -44,11 +36,11 @@ Scheduler.prototype.unschedule = function (key) {
     }
 }
 
-Scheduler.prototype.check = function () {
+Scheduler.prototype.check = function (now) {
     var happening = []
     for (;;) {
         var date = this.when.min()
-        if (!date || date.when > this._Date.now()) {
+        if (!date || date.when > now) {
             break
         }
         this.when.remove(date)
