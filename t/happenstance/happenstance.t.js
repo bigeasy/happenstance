@@ -1,4 +1,4 @@
-require('proof')(6, prove)
+require('proof')(8, prove)
 
 function prove (assert) {
     var Scheduler = require('../..')
@@ -7,8 +7,12 @@ function prove (assert) {
 
     var scheduler = new Scheduler
 
+    assert(scheduler.next(), null, 'nothing happening')
+
     scheduler.schedule('a', 'a', time + 1)
     scheduler.schedule('b', 'b', time + 1)
+
+    assert(scheduler.next(), 1, 'next')
 
     assert(scheduler.what.a.when, 1, 'delay a')
     assert(scheduler.what.b.when, 1, 'delay b')

@@ -57,4 +57,8 @@ Scheduler.prototype.clear = function () {
     this.when.clear()
 }
 
+Scheduler.prototype.next = function () {
+    return this.when.size ? this.when.min().when : null
+}
+
 module.exports = Scheduler
