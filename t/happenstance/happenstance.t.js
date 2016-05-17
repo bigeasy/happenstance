@@ -1,16 +1,18 @@
-require('proof')(8, prove)
+require('proof')(9, prove)
 
 function prove (assert) {
     var Scheduler = require('../..')
 
-    var time = 0
+    var time = 0, scheduler
 
-    var scheduler = new Scheduler
+    scheduler = new Scheduler({ timer: false })
+    scheduler = new Scheduler
+    scheduler = new Scheduler({ Date: { now: function () { return time } } })
 
     assert(scheduler.next(), null, 'nothing happening')
 
-    scheduler.schedule('a', 'a', time + 1)
-    scheduler.schedule('b', 'b', time + 1)
+    scheduler.schedule(time + 1, 'a', function () {})
+    scheduler.schedule(time + 1, 'b', function () {})
 
     assert(scheduler.next(), 1, 'next')
 
@@ -22,16 +24,20 @@ function prove (assert) {
 
     assert(scheduler.what, {}, 'empty')
 
-    scheduler.schedule('a', 'a', time + 1)
-    scheduler.schedule('b', 'b', time + 1)
+    scheduler.schedule(time + 1, 'a', function () {})
+    scheduler.schedule(time + 1, 'b', function () {})
 
-    assert(scheduler.check(time), [], 'nothing happening')
+    assert(scheduler.check(time), 0, 'nothing happening')
     time++
-    assert(scheduler.check(time), [ 'a', 'b' ], 'something happening')
+    assert(scheduler.check(time), 2, 'something happening')
 
-    scheduler.schedule('a', 'a', time + 1)
-    scheduler.schedule('b', 'b', time + 1)
+    scheduler.schedule(time + 1, 'a', function () {})
+    scheduler.schedule(time + 1, 'b', function () {})
 
     scheduler.clear()
     assert(scheduler.what, {}, 'clear')
+
+    scheduler.schedule(time, 'a', function () {
+        assert('immediate')
+    })
 }

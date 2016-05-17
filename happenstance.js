@@ -1,13 +1,47 @@
 var RBTree = require('bintrees').RBTree
 var assert = require('assert')
+var Operation = require('operation')
+var slice = [].slice
 
-function Scheduler (seed) {
+function Scheduler (options) {
+    options || (options = {})
     this.what = {}
     this.when = new RBTree(function (a, b) { return a.when - b.when })
+    this._timeout = null
+    this._Date = options.Date || Date
+    this._timer = !('timer' in options) || options.timer
 }
 
-Scheduler.prototype.schedule = function (key, value, when) {
-    var event = { key: key, value: value, when: when }
+Scheduler.prototype._clear = function () {
+    if (this._timer && this._timeout != null) {
+        clearTimeout(this._timeout)
+        this._timeout = null
+    }
+}
+
+Scheduler.prototype._set = function () {
+    if (this._timer && this._timeout == null && this.next() != null) {
+        var now = this._Date.now()
+        var timeout = Math.max(0, this.next() - now)
+        if (timeout == 0) {
+            this._onTimeout()
+        } else {
+            this._timeout = setTimeout(this._onTimeout.bind(this), timeout)
+        }
+    }
+}
+
+Scheduler.prototype._onTimeout = function () {
+    this._timeout = null
+    this.check(this._Date.now())
+    this._set()
+}
+
+Scheduler.prototype.schedule = function (when, key, operation) {
+    this._clear()
+
+    var operation = new Operation(operation, slice.call(arguments, 3))
+    var event = { when: when, key: key, operation: operation }
 
     this.unschedule(event.key)
 
@@ -19,10 +53,12 @@ Scheduler.prototype.schedule = function (key, value, when) {
     date.events.push(event)
     this.what[event.key] = event
 
-    return event
+    this._set()
 }
 
 Scheduler.prototype.unschedule = function (key) {
+    this._clear()
+
     var scheduled = this.what[key]
     if (scheduled) {
         delete this.what[key]
@@ -34,10 +70,12 @@ Scheduler.prototype.unschedule = function (key) {
             this.when.remove(date)
         }
     }
+
+    this._set()
 }
 
 Scheduler.prototype.check = function (now) {
-    var happening = []
+    var events = 0
     for (;;) {
         var date = this.when.min()
         if (!date || date.when > now) {
@@ -45,14 +83,16 @@ Scheduler.prototype.check = function (now) {
         }
         this.when.remove(date)
         date.events.forEach(function (event) {
+            events++
             delete this.what[event.key]
-            happening.push(event.value)
+            event.operation.apply([ now ], [])
         }, this)
     }
-    return happening
+    return events
 }
 
 Scheduler.prototype.clear = function () {
+    this._clear()
     this.what = {}
     this.when.clear()
 }
