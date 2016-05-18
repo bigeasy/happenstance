@@ -43,6 +43,11 @@ Scheduler.prototype._onTimeout = function () {
     this._set()
 }
 
+Scheduler.prototype.scheduled = function (key) {
+    var scheduled = this.what[key]
+    return scheduled ? scheduled.when : null
+}
+
 Scheduler.prototype.schedule = function (when, key, operation) {
     this._clear()
 
