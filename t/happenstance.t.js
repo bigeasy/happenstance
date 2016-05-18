@@ -5,7 +5,7 @@ function prove (assert) {
 
     var time = 0, scheduler
 
-    scheduler = new Scheduler({ timer: false })
+    scheduler = new Scheduler({ setTimeout: false })
     scheduler = new Scheduler
     scheduler = new Scheduler({ Date: { now: function () { return time } } })
 
