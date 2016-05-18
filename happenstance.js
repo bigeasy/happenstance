@@ -11,20 +11,20 @@ function Scheduler (options) {
     this.when = new RBTree(function (a, b) { return a.when - b.when })
     this._timeout = null
     this._Date = options.Date || Date
-    this._timer = !('timer' in options) || options.timer
+    this.setTimeout = !('setTimeout' in options) || options.setTimeout
     events.EventEmitter.call(this)
 }
 util.inherits(Scheduler, events.EventEmitter)
 
 Scheduler.prototype._clear = function () {
-    if (this._timer && this._timeout != null) {
+    if (this._timeout != null) {
         clearTimeout(this._timeout)
         this._timeout = null
     }
 }
 
 Scheduler.prototype._set = function () {
-    if (this._timer && this._timeout == null && this.next() != null) {
+    if (this.setTimeout && this._timeout == null && this.next() != null) {
         var now = this._Date.now()
         var timeout = Math.max(0, this.next() - now)
         if (timeout == 0) {
