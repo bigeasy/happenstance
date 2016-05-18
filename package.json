@@ -1,6 +1,6 @@
 {
     "name":         "happenstance",
-    "version":      "2.4.0",
+    "version":      "2.4.1",
     "description":  "An event scheduler.",
     "author":       "Alan Gutierrez <alan@prettyrobots.com>",
     "homepage":     "https://bigeasy.github.io/happenstance",
