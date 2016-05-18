@@ -31,6 +31,7 @@ Scheduler.prototype._set = function () {
             this._onTimeout()
         } else {
             this._timeout = setTimeout(this._onTimeout.bind(this), timeout)
+            this._timeout.unref()
         }
     }
 }
