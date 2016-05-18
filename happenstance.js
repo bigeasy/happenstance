@@ -24,9 +24,11 @@ Scheduler.prototype._clear = function () {
 }
 
 Scheduler.prototype._set = function () {
-    if (this.setTimeout && this._timeout == null && this.next() != null) {
+    this._clear()
+    var next = this.next()
+    if (this.setTimeout && next != null) {
         var now = this._Date.now()
-        var timeout = Math.max(0, this.next() - now)
+        var timeout = Math.max(0, next - now)
         if (timeout == 0) {
             this._onTimeout()
         } else {
@@ -49,8 +51,6 @@ Scheduler.prototype.scheduled = function (key) {
 }
 
 Scheduler.prototype.schedule = function (when, key, operation) {
-    this._clear()
-
     var operation = new Operation(operation, slice.call(arguments, 3))
     var event = { when: when, key: key, operation: operation }
 
@@ -68,8 +68,6 @@ Scheduler.prototype.schedule = function (when, key, operation) {
 }
 
 Scheduler.prototype.unschedule = function (key) {
-    this._clear()
-
     var scheduled = this.what[key]
     if (scheduled) {
         delete this.what[key]
@@ -106,6 +104,11 @@ Scheduler.prototype.clear = function () {
     this._clear()
     this.what = {}
     this.when.clear()
+}
+
+Scheduler.prototype.shutdown = function () {
+    this.clear()
+    this.setTimeout = false
 }
 
 Scheduler.prototype.next = function () {

@@ -1,4 +1,4 @@
-require('proof')(11, prove)
+require('proof')(13, prove)
 
 function prove (assert) {
     var Scheduler = require('..')
@@ -8,6 +8,7 @@ function prove (assert) {
     scheduler = new Scheduler({ setTimeout: false })
     scheduler = new Scheduler
     scheduler = new Scheduler({ Date: { now: function () { return time } } })
+    assert(scheduler.setTimeout, 'setTimeout')
 
     assert(scheduler.next(), null, 'nothing happening')
     assert(scheduler.scheduled('a'), null, 'specific event not scheduled')
@@ -37,10 +38,11 @@ function prove (assert) {
     scheduler.schedule(time + 1, 'a', function () {})
     scheduler.schedule(time + 1, 'b', function () {})
 
-    scheduler.clear()
-    assert(scheduler.what, {}, 'clear')
-
     scheduler.schedule(time, 'a', function () {
         assert(true, 'immediate')
     })
+
+    scheduler.shutdown()
+    assert(scheduler.what, {}, 'clear')
+    assert(!scheduler.setTimeout, 'shutdown')
 }
