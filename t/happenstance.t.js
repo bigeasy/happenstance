@@ -41,6 +41,6 @@ function prove (assert) {
     assert(scheduler.what, {}, 'clear')
 
     scheduler.schedule(time, 'a', function () {
-        assert('immediate')
+        assert(true, 'immediate')
     })
 }
