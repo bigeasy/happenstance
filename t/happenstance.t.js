@@ -1,7 +1,7 @@
 require('proof')(9, prove)
 
 function prove (assert) {
-    var Scheduler = require('../..')
+    var Scheduler = require('..')
 
     var time = 0, scheduler
 

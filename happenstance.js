@@ -2,6 +2,8 @@ var RBTree = require('bintrees').RBTree
 var assert = require('assert')
 var Operation = require('operation')
 var slice = [].slice
+var events = require('events')
+var util = require('util')
 
 function Scheduler (options) {
     options || (options = {})
@@ -10,7 +12,9 @@ function Scheduler (options) {
     this._timeout = null
     this._Date = options.Date || Date
     this._timer = !('timer' in options) || options.timer
+    events.EventEmitter.call(this)
 }
+util.inherits(Scheduler, events.EventEmitter)
 
 Scheduler.prototype._clear = function () {
     if (this._timer && this._timeout != null) {
@@ -33,7 +37,9 @@ Scheduler.prototype._set = function () {
 
 Scheduler.prototype._onTimeout = function () {
     this._timeout = null
-    this.check(this._Date.now())
+    var now = this._Date.now()
+    this.check(now)
+    this.emit('timeout', now)
     this._set()
 }
 
