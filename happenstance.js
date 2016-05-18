@@ -40,7 +40,7 @@ Scheduler.prototype._set = function () {
 Scheduler.prototype._onTimeout = function () {
     this._timeout = null
     var now = this._Date.now()
-    if (this.check(now) != 0) this.emit('events')
+    this.check(now)
     this.emit('timeout', now)
     this._set()
 }
@@ -97,6 +97,7 @@ Scheduler.prototype.check = function (now) {
             event.operation.apply([ now ], [])
         }, this)
     }
+    if (events != 0) this.emit('events')
     return events
 }
 
