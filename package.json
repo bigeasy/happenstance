@@ -2,16 +2,20 @@
     "name":             "happenstance",
     "version":          "2.6.0",
     "description":      "An event scheduler.",
-    "author":           "Alan Gutierrez <alan@prettyrobots.com>",
-    "homepage":         "https://bigeasy.github.io/happenstance",
-    "bugs":             "https://github.com/bigeasy/happenstance/issues",
     "keywords":
     [
                         "happenstance", "timer", "events"
     ],
-    "contributors":
-    [
-    ],
+    "author":           "Alan Gutierrez <alan@prettyrobots.com>",
+    "contributors":     [],
+    "homepage":         "https://bigeasy.github.io/happenstance",
+    "bugs":             "https://github.com/bigeasy/happenstance/issues",
+    "license":          "MIT",
+    "repository":
+    {
+                        "type": "git",
+                        "url": "http://github.com/bigeasy/happenstance.git"
+    },
     "dependencies":
     {
                         "bintrees": "1.0.1",
@@ -25,11 +29,5 @@
     "scripts":
     {
                         "test": "proof platform win32 && proof test */*/*.t.js || t/test"
-    },
-    "license":          "MIT",
-    "repository":
-    {
-                        "type": "git",
-                        "url": "http://github.com/bigeasy/happenstance.git"
     }
 }
