@@ -11,8 +11,7 @@ function Scheduler (options) {
     this.when = new RBTree(function (a, b) { return a.when - b.when })
     this._timeout = null
     this._Date = options.Date || Date
-// TODO Bad name for this, make turning things off the affirmative.
-    this.setTimeout = !('setTimeout' in options) || options.setTimeout
+    this.timerless = options.timerless || false
     events.EventEmitter.call(this)
 }
 util.inherits(Scheduler, events.EventEmitter)
@@ -27,7 +26,7 @@ Scheduler.prototype._clear = function () {
 Scheduler.prototype._set = function () {
     this._clear()
     var next = this.next()
-    if (this.setTimeout && next != null) {
+    if (!this.timerless && next != null) {
         var now = this._Date.now()
         var timeout = Math.max(0, next - now)
         if (timeout == 0) {
@@ -110,7 +109,7 @@ Scheduler.prototype.clear = function () {
 
 Scheduler.prototype.shutdown = function () {
     this.clear()
-    this.setTimeout = false
+    this.timerless = true
 }
 
 Scheduler.prototype.next = function () {

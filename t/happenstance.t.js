@@ -8,7 +8,7 @@ function prove (assert) {
     scheduler = new Scheduler({ setTimeout: false })
     scheduler = new Scheduler
     scheduler = new Scheduler({ Date: { now: function () { return time } } })
-    assert(scheduler.setTimeout, 'setTimeout')
+    assert(!scheduler.timerless, 'timerless')
 
     assert(scheduler.next(), null, 'nothing happening')
     assert(scheduler.scheduled('a'), null, 'specific event not scheduled')
