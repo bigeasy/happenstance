@@ -11,6 +11,7 @@ function Scheduler (options) {
     this.when = new RBTree(function (a, b) { return a.when - b.when })
     this._timeout = null
     this._Date = options.Date || Date
+// TODO Bad name for this, make turning things off the affirmative.
     this.setTimeout = !('setTimeout' in options) || options.setTimeout
     events.EventEmitter.call(this)
 }
