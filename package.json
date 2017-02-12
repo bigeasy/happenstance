@@ -19,7 +19,7 @@
     "dependencies":
     {
                         "bintrees": "1.0.1",
-                        "operation": "1.1.x"
+                        "operation": "1.2.x"
     },
     "devDependencies":
     {
