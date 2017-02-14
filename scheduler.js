@@ -64,7 +64,7 @@ Scheduler.prototype.unschedule = function (key) {
 
     if (min == null) {
         this.events.push({ module: 'happenstance', method: 'unset', body: null })
-    } else if (scheduled.when < min.when) {
+    } else if (scheduled != null && scheduled.when < min.when) {
         this.events.push({ module: 'happenstance', method: 'set', body: { when: min.when } })
     }
 }
@@ -91,6 +91,7 @@ Scheduler.prototype.check = function (now) {
         }
         this._when.remove(min)
         min.events.forEach(function (event) {
+            delete this._what[event.key]
             this.events.push({
                 module: 'happenstance',
                 method: 'event',

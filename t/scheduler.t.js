@@ -86,6 +86,9 @@ function prove (assert) {
         body: { when: 2 }
     }, null], 'check')
 
+    // Should do nothing.
+    scheduler.unschedule('x')
+
     scheduler.check(3)
 
     assert([ shifter.shift(), shifter.shift(), shifter.shift() ], [{
