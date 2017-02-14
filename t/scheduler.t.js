@@ -1,7 +1,7 @@
 require('proof/redux')(16, prove)
 
 function prove (assert) {
-    var Scheduler = require('..')
+    var Scheduler = require('..').Scheduler
 
     var time = 0, scheduler
 

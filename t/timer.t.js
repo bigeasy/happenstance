@@ -1,7 +1,7 @@
 require('proof/redux')(2, prove)
 
 function prove (assert) {
-    var Timer = require('../timer')
+    var Timer = require('..').Timer
 
     var now = 0
     var timer = new Timer({
