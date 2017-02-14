@@ -29,6 +29,7 @@ Timer.prototype.push = function (event) {
 }
 
 Timer.prototype._check = function () {
+    this._timeout = null
     this._scheduler.check(Date.now())
 }
 
