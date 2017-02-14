@@ -1,4 +1,4 @@
-require('proof')(16, prove)
+require('proof/redux')(16, prove)
 
 function prove (assert) {
     var Scheduler = require('..')
