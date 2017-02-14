@@ -91,6 +91,7 @@ Scheduler.prototype.check = function (now) {
         }
         this._when.remove(min)
         min.events.forEach(function (event) {
+            events++
             delete this._what[event.key]
             this.events.push({
                 module: 'happenstance',
@@ -107,6 +108,9 @@ Scheduler.prototype.check = function (now) {
     } else {
         this.events.push({ module: 'happenstance', method: 'set', body: { when: min.when } })
     }
+    // TODO Maybe shouldn't return, but I use it for testing in Paxos. Why not
+    // just return the array of events? Why not just link a queue to the events
+    // queue to test presence?
     return events
 }
 
