@@ -1,33 +1,36 @@
 {
-    "name":             "happenstance",
-    "version":          "2.7.1",
-    "description":      "An event scheduler.",
+    "name":                 "happenstance",
+    "version":              "2.7.1",
+    "description":
+
+      "An event scheduler.",
+
     "keywords":
     [
-                        "happenstance", "timer", "events"
+                            "happenstance", "timer", "events"
     ],
-    "author":           "Alan Gutierrez <alan@prettyrobots.com>",
-    "contributors":     [],
-    "homepage":         "https://bigeasy.github.io/happenstance",
-    "bugs":             "https://github.com/bigeasy/happenstance/issues",
-    "license":          "MIT",
+    "author":               "Alan Gutierrez <alan@prettyrobots.com>",
+    "contributors":         [],
+    "homepage":             "https://bigeasy.github.io/happenstance",
+    "bugs":                 "https://github.com/bigeasy/happenstance/issues",
+    "license":              "MIT",
     "repository":
     {
-                        "type": "git",
-                        "url": "http://github.com/bigeasy/happenstance.git"
+                            "type": "git",
+                            "url": "http://github.com/bigeasy/happenstance.git"
     },
     "dependencies":
     {
-                        "bintrees": "1.0.1",
-                        "operation": "1.2.x"
+                            "bintrees":                     "1.0.1",
+                            "operation":                    "1.2.x"
     },
     "devDependencies":
     {
-                        "proof": "1.x"
+                            "proof":                        "1.2.x"
     },
-    "main":             "happenstance.js",
+    "main":                 "happenstance.js",
     "scripts":
     {
-                        "test": "proof platform win32 && proof test */*/*.t.js || t/test"
+                            "test": "proof platform win32 && proof test */*/*.t.js || t/test"
     }
 }
