@@ -22,7 +22,8 @@
     "dependencies":
     {
                             "bintrees":                     "1.0.1",
-                            "operation":                    "1.2.x"
+                            "operation":                    "1.2.x",
+                            "procession":                   "0.0.32"
     },
     "devDependencies":
     {

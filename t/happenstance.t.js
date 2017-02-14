@@ -1,48 +1,111 @@
-require('proof')(13, prove)
+require('proof')(16, prove)
 
 function prove (assert) {
     var Scheduler = require('..')
 
     var time = 0, scheduler
 
-    scheduler = new Scheduler({ setTimeout: false })
-    scheduler = new Scheduler
-    scheduler = new Scheduler({ Date: { now: function () { return time } } })
-    assert(!scheduler.timerless, 'timerless')
+    var scheduler = new Scheduler()
 
-    assert(scheduler.next(), null, 'nothing happening')
-    assert(scheduler.scheduled('a'), null, 'specific event not scheduled')
+    var shifter = scheduler.events.shifter()
 
-    scheduler.schedule(time + 1, 'a', function () {})
-    scheduler.schedule(time + 1, 'b', function () {})
+    assert(scheduler.next(), null, 'nothing scheduled')
+    assert(scheduler.when('x'), null, 'not scheduled')
 
-    assert(scheduler.scheduled('a'), time + 1, 'scheduled')
+    scheduler.schedule(time + 1, 'x', 'X')
 
-    assert(scheduler.next(), 1, 'next')
+    assert(scheduler.next(), 1, 'something scheduled')
 
-    assert(scheduler.what.a.when, 1, 'delay a')
-    assert(scheduler.what.b.when, 1, 'delay b')
+    assert(shifter.shift(), {
+        module: 'happenstance',
+        method: 'set',
+        body: { when: 1 }
+    }, 'schedule')
 
-    scheduler.unschedule('a')
-    scheduler.unschedule('b')
+    assert(scheduler.when('x'), 1, 'scheduled')
 
-    assert(scheduler.what, {}, 'empty')
+    scheduler.schedule(time + 1, 'y', 'Y')
 
-    scheduler.schedule(time + 1, 'a', function () {})
-    scheduler.schedule(time + 1, 'b', function () {})
+    scheduler.schedule(time + 2, 'z', 'Z')
 
-    assert(scheduler.check(time), 0, 'nothing happening')
-    time++
-    assert(scheduler.check(time), 2, 'something happening')
+    assert(shifter.shift(), null, 'no timer resets')
 
-    scheduler.schedule(time + 1, 'a', function () {})
-    scheduler.schedule(time + 1, 'b', function () {})
+    assert(scheduler.when('y'), 1, 'both scheduled')
 
-    scheduler.schedule(time, 'a', function () {
-        assert(true, 'immediate')
-    })
+    scheduler.unschedule('x')
 
-    scheduler.shutdown()
-    assert(scheduler.what, {}, 'clear')
-    assert(!scheduler.setTimeout, 'shutdown')
+    assert(scheduler.when('x'), null, 'unscheduled')
+
+    scheduler.unschedule('y')
+    assert(scheduler.when('y'), null, 'both unscheduled')
+
+    assert(shifter.shift(), {
+        module: 'happenstance',
+        method: 'set',
+        body: { when: 2 }
+    }, 'timer moved forward')
+
+    scheduler.unschedule('z')
+    assert(scheduler.when('z'), null, 'all unscheduled')
+
+    assert(shifter.shift(), {
+        module: 'happenstance',
+        method: 'unset',
+        body: null
+    }, 'timer unset')
+
+    scheduler.schedule(time + 1, 'x', 'X')
+    scheduler.schedule(time + 1, 'y', 'Y')
+    scheduler.schedule(time + 2, 'z', 'Z')
+
+    assert(shifter.shift(), {
+        module: 'happenstance',
+        method: 'set',
+        body: { when: 1 }
+    }, 'timer set again')
+
+    scheduler.check(1)
+
+    assert([ shifter.shift(), shifter.shift(), shifter.shift(), shifter.shift() ], [{
+        module: 'happenstance',
+        method: 'event',
+        now: 1,
+        when: 1,
+        key: 'x',
+        body: 'X'
+    }, {
+        module: 'happenstance',
+        method: 'event',
+        now: 1,
+        when: 1,
+        key: 'y',
+        body: 'Y'
+    }, {
+        module: 'happenstance',
+        method: 'set',
+        body: { when: 2 }
+    }, null], 'check')
+
+    scheduler.check(3)
+
+    assert([ shifter.shift(), shifter.shift(), shifter.shift() ], [{
+        module: 'happenstance',
+        method: 'event',
+        now: 3,
+        when: 2,
+        key: 'z',
+        body: 'Z'
+    }, {
+        module: 'happenstance',
+        method: 'unset',
+        body: null
+    }, null], 'check and done')
+
+    scheduler.clear()
+
+    assert(shifter.shift(), {
+        module: 'happenstance',
+        method: 'unset',
+        body: null
+    }, 'cleared')
 }

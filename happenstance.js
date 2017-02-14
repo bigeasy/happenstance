@@ -1,119 +1,118 @@
-var RBTree = require('bintrees').RBTree
+// Common utilities.
 var assert = require('assert')
-var Operation = require('operation')
-var slice = [].slice
-var events = require('events')
 var util = require('util')
 
-function Scheduler (options) {
-    options || (options = {})
-    this.what = {}
-    this.when = new RBTree(function (a, b) { return a.when - b.when })
-    this._timeout = null
-    this._Date = options.Date || Date
-    this.timerless = options.timerless || false
-    events.EventEmitter.call(this)
-}
-util.inherits(Scheduler, events.EventEmitter)
+// Ordered map implemented as a red-black tree.
+var RBTree = require('bintrees').RBTree
 
-Scheduler.prototype._clear = function () {
-    if (this._timeout != null) {
-        clearTimeout(this._timeout)
-        this._timeout = null
-    }
-}
+// An evented message queue used for events and timer events.
+var Procession = require('procession')
 
-Scheduler.prototype._set = function () {
-    this._clear()
-    var next = this.next()
-    if (!this.timerless && next != null) {
-        var now = this._Date.now()
-        var timeout = Math.max(0, next - now)
-        if (timeout == 0) {
-            this._onTimeout()
-        } else {
-            this._timeout = setTimeout(this._onTimeout.bind(this), timeout)
-        }
-    }
+// Our scheduler emits two types of events through its `events` queue. It does
+// not maintain a timer itself, nor does it check the system clock, but instead
+// emits events based on timestamps given to it. This allows you to have a timer
+// whose events can be recorded and replayed.
+
+//
+function Scheduler () {
+    this._what = {}
+    this._when = new RBTree(function (a, b) { return a.when - b.when })
+    this.events = new Procession
 }
 
-Scheduler.prototype._onTimeout = function () {
-    this._timeout = null
-    var now = this._Date.now()
-    this.check(now)
-    this.emit('timeout', now)
-    this._set()
-}
-
-Scheduler.prototype.scheduled = function (key) {
-    var scheduled = this.what[key]
+Scheduler.prototype.when = function (key) {
+    var scheduled = this._what[key]
     return scheduled ? scheduled.when : null
 }
 
-Scheduler.prototype.schedule = function (when, key, operation) {
-    var operation = new Operation(operation, slice.call(arguments, 3))
-    var event = { when: when, key: key, operation: operation }
+Scheduler.prototype.next = function () {
+    return this._when.size ? this._when.min().when : null
+}
 
-    this.unschedule(event.key)
+Scheduler.prototype.schedule = function (when, key, body) {
+    this._unschedule(this._what[key])
 
-    var date = this.when.find({ when: event.when })
+    var event = this._what[key] = {
+        module: 'happenstance',
+        method: 'event',
+        when: when,
+        key: key,
+        body: body
+    }
+
+    var min = this._when.min()
+    var set = min == null || when < min.when
+
+    var date = this._when.find({ when: event.when })
     if (date == null) {
         date = { when: event.when, events: [] }
-        this.when.insert(date)
+        this._when.insert(date)
     }
     date.events.push(event)
-    this.what[event.key] = event
 
-    this._set()
+    if (set) {
+        this.events.push({ module: 'happenstance', method: 'set', body: { when: when } })
+    }
 }
 
 Scheduler.prototype.unschedule = function (key) {
-    var scheduled = this.what[key]
+    var scheduled = this._what[key]
+
+    this._unschedule(scheduled)
+
+    var min = this._when.min()
+
+    if (min == null) {
+        this.events.push({ module: 'happenstance', method: 'unset', body: null })
+    } else if (scheduled.when < min.when) {
+        this.events.push({ module: 'happenstance', method: 'set', body: { when: min.when } })
+    }
+}
+
+Scheduler.prototype._unschedule = function (scheduled) {
     if (scheduled) {
-        delete this.what[key]
-        var date = this.when.find({ when: scheduled.when })
+        delete this._what[scheduled.key]
+        var date = this._when.find({ when: scheduled.when })
         var index = date.events.indexOf(scheduled)
         assert(~index, 'cannot find scheduled event')
         date.events.splice(index, 1)
         if (date.events.length == 0) {
-            this.when.remove(date)
+            this._when.remove(date)
         }
     }
-
-    this._set()
 }
 
 Scheduler.prototype.check = function (now) {
     var events = 0
     for (;;) {
-        var date = this.when.min()
-        if (!date || date.when > now) {
+        var min = this._when.min()
+        if (!min || min.when > now) {
             break
         }
-        this.when.remove(date)
-        date.events.forEach(function (event) {
-            events++
-            delete this.what[event.key]
-            event.operation.apply([ now ], [])
+        this._when.remove(min)
+        min.events.forEach(function (event) {
+            this.events.push({
+                module: 'happenstance',
+                method: 'event',
+                now: now,
+                key: event.key,
+                when: event.when,
+                body: event.body
+            })
         }, this)
     }
-    if (events != 0) this.emit('events')
+    if (min == null) {
+        this.events.push({ module: 'happenstance', method: 'unset', body: null })
+    } else {
+        this.events.push({ module: 'happenstance', method: 'set', body: { when: min.when } })
+    }
     return events
 }
 
 Scheduler.prototype.clear = function () {
-    this._clear()
-    this.what = {}
-    this.when.clear()
-}
-
-Scheduler.prototype.shutdown = function () {
-    this.clear()
-    this.timerless = true
-}
-
-Scheduler.prototype.next = function () {
-    return this.when.size ? this.when.min().when : null
+    this._what = {}
+    this._when.clear()
+    this.events.push({ module: 'happenstance', method: 'unset', body: null })
 }
 
 module.exports = Scheduler
