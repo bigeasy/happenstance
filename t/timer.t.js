@@ -1,21 +1,16 @@
 require('proof/redux')(2, prove)
 
-function prove (assert) {
+function prove (assert, callback) {
     var Timer = require('..').Timer
 
     var now = 0
     var timer = new Timer({
         check: function (now) {
             assert(true, 'called')
+            callback()
         }
     })
     var shifter = timer.events.shifter()
-
-    timer.push({
-        module: 'happenstance',
-        method: 'set',
-        body: { when: Date.now() - 5000 }
-    })
 
     timer.push({
         module: 'happenstance',
@@ -40,4 +35,10 @@ function prove (assert) {
         method: 'event',
         body: 1
     }, 'pass through')
+
+    timer.push({
+        module: 'happenstance',
+        method: 'set',
+        body: { when: Date.now() - 5000 }
+    })
 }

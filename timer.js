@@ -1,8 +1,6 @@
 var Procession = require('procession')
-var coalesce = require('nascent.coalesce')
 
-function Timer (scheduler, options) {
-    options || (options = {})
+function Timer (scheduler) {
     this.events = new Procession
     this._timeout = null
     this._scheduler = scheduler
@@ -13,11 +11,7 @@ Timer.prototype.push = function (event) {
     case 'set':
         this._unset()
         var now = Date.now()
-        if (event.body.when <= now) {
-            this._check(now)
-        } else {
-            this._timeout = setTimeout(this._check.bind(this), event.body.when - now)
-        }
+        this._timeout = setTimeout(this._check.bind(this), Math.max(event.body.when - now, 0))
         break
     case 'unset':
         this._unset()
