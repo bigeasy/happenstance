@@ -12,11 +12,11 @@ function prove (assert, callback) {
     })
     var shifter = timer.events.shifter()
 
-    timer.push({
+    timer.enqueue({
         module: 'happenstance',
         method: 'event',
         body: 1
-    })
+    }, function () {})
 
     timer.push({
         module: 'happenstance',
