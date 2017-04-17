@@ -1,4 +1,4 @@
-require('proof')(16, prove)
+require('proof')(17, prove)
 
 function prove (assert) {
     var Scheduler = require('..').Scheduler
@@ -111,4 +111,20 @@ function prove (assert) {
         method: 'unset',
         body: null
     }, 'cleared')
+
+    scheduler.schedule(time + 1, 'x', 'X')
+    scheduler.schedule(time + 1, 'y', 'Y')
+    shifter.join(function (envelope) {
+        return envelope.method == 'event'
+    }, function (error, envelope) {
+        scheduler.unschedule('y')
+    })
+
+    scheduler.check(4)
+
+    assert(shifter.shift(), {
+        module: 'happenstance',
+        method: 'unset',
+        body: null
+    }, 'cancel event scheduled at same millisecond')
 }

@@ -89,9 +89,9 @@ Scheduler.prototype.check = function (now) {
         if (!min || min.when > now) {
             break
         }
-        this._when.remove(min)
-        min.events.forEach(function (event) {
+        while (min.events.length != 0) {
             events++
+            var event = min.events.shift()
             delete this._what[event.key]
             this.events.push({
                 module: 'happenstance',
@@ -101,7 +101,8 @@ Scheduler.prototype.check = function (now) {
                 when: event.when,
                 body: event.body
             })
-        }, this)
+        }
+        this._when.remove(min)
     }
     if (min == null) {
         this.events.push({ module: 'happenstance', method: 'unset', body: null })
