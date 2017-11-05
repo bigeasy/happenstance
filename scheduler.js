@@ -20,6 +20,15 @@ function Scheduler () {
     this.events = new Procession
 }
 
+Scheduler.prototype.calendar = function () {
+    var iterator = this._when.iterator(),  moment
+    var events = []
+    while ((moment = iterator.next()) != null) {
+        events.push.apply(events, moment.events)
+    }
+    return events
+}
+
 Scheduler.prototype.when = function (key) {
     var scheduled = this._what[key]
     return scheduled ? scheduled.when : null
