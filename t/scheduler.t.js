@@ -1,4 +1,4 @@
-require('proof')(17, prove)
+require('proof')(18, prove)
 
 function prove (okay) {
     var Scheduler = require('..').Scheduler
@@ -15,6 +15,13 @@ function prove (okay) {
     scheduler.schedule(time + 1, 'x', 'X')
 
     okay(scheduler.next(), 1, 'something scheduled')
+    okay(scheduler.calendar(), [{
+        module: 'happenstance',
+        method: 'event',
+        when: 1,
+        key: 'x',
+        body: 'X'
+    }], 'calendar')
 
     okay(shifter.shift(), {
         module: 'happenstance',
