@@ -1,6 +1,6 @@
 require('proof')(17, prove)
 
-function prove (assert) {
+function prove (okay) {
     var Scheduler = require('..').Scheduler
 
     var time = 0, scheduler
@@ -9,46 +9,46 @@ function prove (assert) {
 
     var shifter = scheduler.events.shifter()
 
-    assert(scheduler.next(), null, 'nothing scheduled')
-    assert(scheduler.when('x'), null, 'not scheduled')
+    okay(scheduler.next(), null, 'nothing scheduled')
+    okay(scheduler.when('x'), null, 'not scheduled')
 
     scheduler.schedule(time + 1, 'x', 'X')
 
-    assert(scheduler.next(), 1, 'something scheduled')
+    okay(scheduler.next(), 1, 'something scheduled')
 
-    assert(shifter.shift(), {
+    okay(shifter.shift(), {
         module: 'happenstance',
         method: 'set',
         body: { when: 1 }
     }, 'schedule')
 
-    assert(scheduler.when('x'), 1, 'scheduled')
+    okay(scheduler.when('x'), 1, 'scheduled')
 
     scheduler.schedule(time + 1, 'y', 'Y')
 
     scheduler.schedule(time + 2, 'z', 'Z')
 
-    assert(shifter.shift(), null, 'no timer resets')
+    okay(shifter.shift(), null, 'no timer resets')
 
-    assert(scheduler.when('y'), 1, 'both scheduled')
+    okay(scheduler.when('y'), 1, 'both scheduled')
 
     scheduler.unschedule('x')
 
-    assert(scheduler.when('x'), null, 'unscheduled')
+    okay(scheduler.when('x'), null, 'unscheduled')
 
     scheduler.unschedule('y')
-    assert(scheduler.when('y'), null, 'both unscheduled')
+    okay(scheduler.when('y'), null, 'both unscheduled')
 
-    assert(shifter.shift(), {
+    okay(shifter.shift(), {
         module: 'happenstance',
         method: 'set',
         body: { when: 2 }
     }, 'timer moved forward')
 
     scheduler.unschedule('z')
-    assert(scheduler.when('z'), null, 'all unscheduled')
+    okay(scheduler.when('z'), null, 'all unscheduled')
 
-    assert(shifter.shift(), {
+    okay(shifter.shift(), {
         module: 'happenstance',
         method: 'unset',
         body: null
@@ -58,7 +58,7 @@ function prove (assert) {
     scheduler.schedule(time + 1, 'y', 'Y')
     scheduler.schedule(time + 2, 'z', 'Z')
 
-    assert(shifter.shift(), {
+    okay(shifter.shift(), {
         module: 'happenstance',
         method: 'set',
         body: { when: 1 }
@@ -66,7 +66,7 @@ function prove (assert) {
 
     scheduler.check(1)
 
-    assert([ shifter.shift(), shifter.shift(), shifter.shift(), shifter.shift() ], [{
+    okay([ shifter.shift(), shifter.shift(), shifter.shift(), shifter.shift() ], [{
         module: 'happenstance',
         method: 'event',
         now: 1,
@@ -91,7 +91,7 @@ function prove (assert) {
 
     scheduler.check(3)
 
-    assert([ shifter.shift(), shifter.shift(), shifter.shift() ], [{
+    okay([ shifter.shift(), shifter.shift(), shifter.shift() ], [{
         module: 'happenstance',
         method: 'event',
         now: 3,
@@ -106,7 +106,7 @@ function prove (assert) {
 
     scheduler.clear()
 
-    assert(shifter.shift(), {
+    okay(shifter.shift(), {
         module: 'happenstance',
         method: 'unset',
         body: null
@@ -122,7 +122,7 @@ function prove (assert) {
 
     scheduler.check(4)
 
-    assert(shifter.shift(), {
+    okay(shifter.shift(), {
         module: 'happenstance',
         method: 'unset',
         body: null
