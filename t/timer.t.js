@@ -8,6 +8,9 @@ function prove (assert, callback) {
         check: function (now) {
             assert(true, 'called')
             callback()
+        },
+        calendar: function () {
+            return {}
         }
     })
     var shifter = timer.events.shifter()
