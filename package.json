@@ -1,6 +1,6 @@
 {
     "name":                 "happenstance",
-    "version":              "5.0.4",
+    "version":              "5.0.5",
     "description":
 
       "Queue timer events into an evented message queue.",
