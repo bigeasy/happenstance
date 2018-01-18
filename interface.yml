@@ -1,6 +1,0 @@
-title: Happenstance
-interface:
-  - source: new Happenstance
-    arguments: {}
-    description: |
-      Constructs a new `Happenstance` object.
