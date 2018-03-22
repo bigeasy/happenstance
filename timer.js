@@ -8,7 +8,7 @@ function Timer (scheduler) {
 }
 
 Timer.prototype.push = function (event) {
-    switch (event.method) {
+    switch (event && event.method) {
     case 'set':
         var now = Date.now()
         logger.info('set', { now: now, duration: event.body.when - now, $event: event })
