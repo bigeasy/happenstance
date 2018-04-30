@@ -23,7 +23,7 @@
     {
                             "bintrees":                     "1.0.2",
                             "operation":                    "1.6.x",
-                            "procession":                   "0.18.x",
+                            "procession":                   "0.19.x",
                             "prolific.logger":              "6.0.x"
     },
     "devDependencies":
