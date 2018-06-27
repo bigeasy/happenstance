@@ -8,6 +8,8 @@ var RBTree = require('bintrees').RBTree
 // An evented message queue used for events and timer events.
 var Procession = require('procession')
 
+var comparator = require('./comparator')
+
 // Our scheduler emits two types of events through its `events` queue. It does
 // not maintain a timer itself, nor does it check the system clock, but instead
 // emits events based on timestamps given to it. This allows you to have a timer
@@ -16,7 +18,7 @@ var Procession = require('procession')
 //
 function Scheduler () {
     this._what = {}
-    this._when = new RBTree(function (a, b) { return a.when - b.when })
+    this._when = new RBTree(comparator)
     this.events = new Procession
 }
 
@@ -24,7 +26,13 @@ Scheduler.prototype.calendar = function () {
     var iterator = this._when.iterator(),  moment
     var events = []
     while ((moment = iterator.next()) != null) {
-        events.push.apply(events, moment.events)
+        events.push({
+            module: 'happenstance',
+            method: 'event',
+            when: moment.when,
+            key: moment.key,
+            body: moment.body
+        })
     }
     return events
 }
@@ -52,12 +60,7 @@ Scheduler.prototype.schedule = function (when, key, body) {
     var min = this._when.min()
     var set = min == null || when < min.when
 
-    var date = this._when.find({ when: event.when })
-    if (date == null) {
-        date = { when: event.when, events: [] }
-        this._when.insert(date)
-    }
-    date.events.push(event)
+    this._when.insert(event)
 
     if (set) {
         this.events.push({ module: 'happenstance', method: 'set', body: { when: when } })
@@ -81,13 +84,8 @@ Scheduler.prototype.unschedule = function (key) {
 Scheduler.prototype._unschedule = function (scheduled) {
     if (scheduled) {
         delete this._what[scheduled.key]
-        var date = this._when.find({ when: scheduled.when })
-        var index = date.events.indexOf(scheduled)
-        assert(~index, 'cannot find scheduled event')
-        date.events.splice(index, 1)
-        if (date.events.length == 0) {
-            this._when.remove(date)
-        }
+        var found = this._when.remove({ when: scheduled.when, key: scheduled.key })
+        assert(!! found, 'cannot find scheduled event')
     }
 }
 
@@ -98,20 +96,16 @@ Scheduler.prototype.check = function (now) {
         if (!min || min.when > now) {
             break
         }
-        while (min.events.length != 0) {
-            events++
-            var event = min.events.shift()
-            delete this._what[event.key]
-            this.events.push({
-                module: 'happenstance',
-                method: 'event',
-                now: now,
-                key: event.key,
-                when: event.when,
-                body: event.body
-            })
-        }
         this._when.remove(min)
+        delete this._what[min.key]
+        this.events.push({
+            module: 'happenstance',
+            method: 'event',
+            now: now,
+            key: min.key,
+            when: min.when,
+            body: min.body
+        })
     }
     if (min == null) {
         this.events.push({ module: 'happenstance', method: 'unset', body: null })

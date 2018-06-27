@@ -129,9 +129,21 @@ function prove (okay) {
 
     scheduler.check(4)
 
-    okay(shifter.shift(), {
+    // Note that we don't try to match sets and with unsets. `check`, `schedule`
+    // and `unschedule` each check for necessary timer resets before they
+    // return. Nested calls can post duplicate or superfluous timer events. A
+    // call to `unschedule` nested within a call to `check` could generate
+    // duplicate `unset` events. This is not a a big deal. Missed timer events
+    // are worse than duplicates. The `Timer` object already checks to see that
+    // a timer is actually set before unsetting it. Thus, user be warned that an
+    // unset event may occur when no timer is actually set.
+    okay([ shifter.shift(), shifter.shift(), shifter.shift() ], [{
         module: 'happenstance',
         method: 'unset',
         body: null
-    }, 'cancel event scheduled at same millisecond')
+    }, {
+        module: 'happenstance',
+        method: 'unset',
+        body: null
+    }, null ], 'cancel event scheduled at same millisecond')
 }
