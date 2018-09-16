@@ -22,7 +22,7 @@
     "dependencies":
     {
                             "bintrees":                     "1.0.2",
-                            "procession":                   "0.20.x"
+                            "procession":                   "0.22.x"
     },
     "devDependencies":
     {
