@@ -6,7 +6,7 @@ function prove (okay, callback) {
     var now = 0
     var timer = new Timer({
         check: function (now) {
-            okay(true, 'called')
+            okay('called')
             callback()
         },
         calendar: function () {
