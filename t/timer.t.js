@@ -1,12 +1,12 @@
 require('proof')(2, prove)
 
-function prove (assert, callback) {
+function prove (okay, callback) {
     var Timer = require('..').Timer
 
     var now = 0
     var timer = new Timer({
         check: function (now) {
-            assert(true, 'called')
+            okay(true, 'called')
             callback()
         },
         calendar: function () {
@@ -33,7 +33,7 @@ function prove (assert, callback) {
         body: null
     })
 
-    assert(shifter.shift(), {
+    okay(shifter.shift(), {
         module: 'happenstance',
         method: 'event',
         body: 1
