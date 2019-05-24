@@ -1,5 +1,5 @@
 module.exports = function (left, right) {
-    var compare = left.when - right.when
+    const compare = left.when - right.when
     if (compare != 0) {
         return compare
     }

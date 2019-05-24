@@ -21,16 +21,14 @@
     },
     "dependencies":
     {
-                            "bintrees":                     "1.0.2",
-                            "procession":                   "4.0.x"
+                            "bintrees":                     "1.0.2"
     },
     "devDependencies":
     {
-                            "proof":                        "7.0.x"
     },
     "main":                 "happenstance.js",
     "scripts":
     {
-                            "test": "proof test test/*.t.js"
+                            "test": "mocha"
     }
 }

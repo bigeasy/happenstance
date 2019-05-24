@@ -1,14 +1,11 @@
 // Common utilities.
-var assert = require('assert')
-var util = require('util')
+const assert = require('assert')
+const events = require('events')
 
 // Ordered map implemented as a red-black tree.
-var RBTree = require('bintrees').RBTree
+const RBTree = require('bintrees').RBTree
 
-// An evented message queue used for events and timer events.
-var Procession = require('procession')
-
-var comparator = require('./comparator')
+const comparator = require('./comparator')
 
 // Our scheduler emits two types of events through its `events` queue. It does
 // not maintain a timer itself, nor does it check the system clock, but instead
@@ -16,112 +13,94 @@ var comparator = require('./comparator')
 // whose events can be recorded and replayed.
 
 //
-function Scheduler () {
-    this._what = {}
-    this._when = new RBTree(comparator)
-    this.events = new Procession
-}
-
-Scheduler.prototype.calendar = function () {
-    var iterator = this._when.iterator(),  moment
-    var events = []
-    while ((moment = iterator.next()) != null) {
-        events.push({
-            module: 'happenstance',
-            method: 'event',
-            when: moment.when,
-            key: moment.key,
-            body: moment.body
-        })
-    }
-    return events
-}
-
-Scheduler.prototype.when = function (key) {
-    var scheduled = this._what[key]
-    return scheduled ? scheduled.when : null
-}
-
-Scheduler.prototype.next = function () {
-    return this._when.size ? this._when.min().when : null
-}
-
-Scheduler.prototype.schedule = function (when, key, body) {
-    this._unschedule(this._what[key])
-
-    var event = this._what[key] = {
-        module: 'happenstance',
-        method: 'event',
-        when: when,
-        key: key,
-        body: body
+class Scheduler extends events.EventEmitter {
+    constructor () {
+        super()
+        this._what = {}
+        this._when = new RBTree(comparator)
     }
 
-    var min = this._when.min()
-    var set = min == null || when < min.when
-
-    this._when.insert(event)
-
-    if (set) {
-        this.events.push({ module: 'happenstance', method: 'set', body: { when: when } })
-    }
-}
-
-Scheduler.prototype.unschedule = function (key) {
-    var scheduled = this._what[key]
-
-    this._unschedule(scheduled)
-
-    var min = this._when.min()
-
-    if (min == null) {
-        this.events.push({ module: 'happenstance', method: 'unset', body: null })
-    } else if (scheduled != null && scheduled.when < min.when) {
-        this.events.push({ module: 'happenstance', method: 'set', body: { when: min.when } })
-    }
-}
-
-Scheduler.prototype._unschedule = function (scheduled) {
-    if (scheduled) {
-        delete this._what[scheduled.key]
-        var found = this._when.remove({ when: scheduled.when, key: scheduled.key })
-        assert(!! found, 'cannot find scheduled event')
-    }
-}
-
-Scheduler.prototype.check = function (now) {
-    var events = 0
-    for (;;) {
-        var min = this._when.min()
-        if (!min || min.when > now) {
-            break
+    calendar () {
+        let iterator = this._when.iterator(),  event
+        const events = []
+        while ((event = iterator.next()) != null) {
+            events.push({ ...event })
         }
-        this._when.remove(min)
-        delete this._what[min.key]
-        this.events.push({
-            module: 'happenstance',
-            method: 'event',
-            now: now,
-            key: min.key,
-            when: min.when,
-            body: min.body
-        })
+        return events
     }
-    if (min == null) {
-        this.events.push({ module: 'happenstance', method: 'unset', body: null })
-    } else {
-        this.events.push({ module: 'happenstance', method: 'set', body: { when: min.when } })
-    }
-    // TODO Maybe shouldn't return, but I use it for testing in Paxos. Why not
-    // just return the array of events? Why not just link a queue to the events
-    // queue to test presence?
-    return events
-}
 
-Scheduler.prototype.clear = function () {
-    this._what = {}
-    this._when.clear()
-    this.events.push({ module: 'happenstance', method: 'unset', body: null })
+    when (key) {
+        const scheduled = this._what[key]
+        return scheduled ? scheduled.when : null
+    }
+
+    next () {
+        return this._when.size ? this._when.min().when : null
+    }
+
+    schedule (when, key, body) {
+        this._unschedule(this._what[key])
+
+        const event = this._what[key] = {
+            when: when,
+            key: key,
+            body: body
+        }
+
+        const min = this._when.min()
+        const set = min == null || when < min.when
+
+        this._when.insert(event)
+
+        if (set) {
+            this.emit('set', when)
+        }
+    }
+
+    unschedule (key) {
+        const scheduled = this._what[key]
+
+        this._unschedule(scheduled)
+
+        const min = this._when.min()
+
+        if (min == null) {
+            this.emit('unset')
+        } else if (scheduled != null && scheduled.when < min.when) {
+            this.emit('set', min.when)
+        }
+    }
+
+    _unschedule (scheduled) {
+        if (scheduled) {
+            delete this._what[scheduled.key]
+            const found = this._when.remove({ when: scheduled.when, key: scheduled.key })
+            assert(!! found, 'cannot find scheduled event')
+        }
+    }
+
+    check (now) {
+        for (;;) {
+            var min = this._when.min()
+            if (!min || min.when > now) {
+                break
+            }
+            this._when.remove(min)
+            delete this._what[min.key]
+            this.emit('data', { now, ...min })
+        }
+        if (min == null) {
+            this.emit('unset')
+        } else {
+            this.emit('set', min.when)
+        }
+    }
+
+    clear () {
+        this._what = {}
+        this._when.clear()
+        this.emit('unset')
+    }
 }
 
 module.exports = Scheduler
