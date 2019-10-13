@@ -1,8 +1,30 @@
-TK: All out dated! Ugh!
+[![Actions Status](https://github.com/bigeasy/happenstance/workflows/Node%20CI/badge.svg)](https://github.com/bigeasy/happenstance/actions)
+[![codecov](https://codecov.io/gh/bigeasy/happenstance/branch/master/graph/badge.svg)](https://codecov.io/gh/bigeasy/happenstanchappenstance
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Happenstance is a scheduler. You put values in it. They come back out when the
 time is right. It doesn't set timers, so you'll need to check with it at regular
 intervals.
+
+| What          | Where                                             |
+| --- | --- |
+| Discussion    | https://github.com/bigeasy/happenstance/issues/1  |
+| Documentation | https://bigeasy.github.io/happenstance            |
+| Source        | https://github.com/bigeasy/happenstance           |
+| Issues        | https://github.com/bigeasy/happenstance/issues    |
+| CI            | https://travis-ci.org/bigeasy/happenstance        |
+| Coverage:     | https://codecov.io/gh/bigeasy/happenstance        |
+| License:      | MIT                                               |
+
+
+```
+npm install happenstance
+```
+
+TK: All out dated! Ugh!
+TK: Why isn't it setting timers itself. Kind of a silly spearation. Oh, because
+we want to ignore timers in Paxos sometimes. Right.
+
 
 ```
 var Scheduler = require('happenstance')
