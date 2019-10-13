@@ -1,5 +1,5 @@
 [![Actions Status](https://github.com/bigeasy/happenstance/workflows/Node%20CI/badge.svg)](https://github.com/bigeasy/happenstance/actions)
-[![codecov](https://codecov.io/gh/bigeasy/happenstance/branch/master/graph/badge.svg)](https://codecov.io/gh/bigeasy/happenstanchappenstance
+[![codecov](https://codecov.io/gh/bigeasy/happenstance/branch/master/graph/badge.svg)](https://codecov.io/gh/bigeasy/happenstanchappenstance)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Happenstance is a scheduler. You put values in it. They come back out when the
