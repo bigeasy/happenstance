@@ -15,6 +15,7 @@ An event scheduler to manage multiple timed events using a single `setTimeout`.
 | License:      | MIT                                               |
 
 ```
+//{ "mode": "text" }
 npm install happenstance
 ```
 
@@ -26,18 +27,26 @@ Proof `okay` function to assert out statements in the readme. A Proof unit test
 generally looks like this.
 
 ```javascript
-require('proof')(4, async okay => {
-    okay('always okay')
-    okay(true, 'okay if true')
-    okay(1, 1, 'okay if equal')
-    okay({ value: 1 }, { value: 1 }, 'okay if deep strict equal')
+//{ "code": { "tests": 13 }, "text": { "tests": 4  } }
+require('proof')(%(tests)d, async okay => {
+    //{ "include": "test", "mode": "code" }
+    //{ "include": "proof" }
 })
+```
+
+```javascript
+//{ "name": "proof", "mode": "text" }
+okay('always okay')
+okay(true, 'okay if true')
+okay(1, 1, 'okay if equal')
+okay({ value: 1 }, { value: 1 }, 'okay if deep strict equal')
 ```
 
 You can run this unit test yourself to see the output from the various
 code sections of the readme.
 
 ```text
+//{ "mode": "text" }
 git clone git@github.com:bigeasy/happenstance.git
 cd happenstance
 npm install --no-package-lock --no-save
@@ -45,6 +54,13 @@ node test/readme.t.js
 ```
 
 ## About
+
+```javascript
+//{ "name": "test", "mode": "code" }
+{
+    //{ "include": "overview" }
+}
+```
 
 Happenstance is an event calendar. Rather than managing many different
 `setTimeout` handles for different timed events, or checking a list of things to
@@ -80,7 +96,8 @@ there are any events whose scheduled timestamp is at or before the check
 timestamp those events are emitted from the `'data'` event.
 
 ```javascript
-const { Scheduler: Calendar } = require('happenstance')
+//{ "name": "overview", "code": { "path": "'..'" }, "text": { "path": "'happenstance'" } }
+const { Scheduler: Calendar } = require(%(path)s)
 
 // Create a new calendar.
 const calendar = new Calendar
@@ -108,6 +125,7 @@ calendar.check(11)
 You can get properties for a scheduled event using `what`, `when` and `get`.
 
 ```javascript
+//{ "name": "overview" }
 calendar.schedule(14, 'y', { value: 1 })
 
 // Get all the properties for the event.
@@ -145,6 +163,7 @@ which they scheduled. Events scheduled for the same timestamp are emitted in the
 sort order of the keys.
 
 ```javascript
+//{ "name": "overview" }
 // Create a listener to gather events into an array.
 const events = [], multiple = event => {
     events.push(event)
@@ -177,6 +196,7 @@ calendar.removeListener('data', multiple)
 Events can be rescheduled using the key.
 
 ```javascript
+//{ "name": "overview" }
 // A once listener for the sake of the unit test.
 calendar.once('data', ({ now, when, key, body }) => {
     okay({ now, when, key, body }, {
@@ -203,6 +223,7 @@ calendar.check(35)
 Events can be unscheduled using the key.
 
 ```javascript
+//{ "name": "overview" }
 // Regsiter a listener that could respond to multiple events.
 const listener = ({ now, when, key, body }) => {
     okay({ now, when, key, body }, {
@@ -236,8 +257,9 @@ that will set a single `setTimeout` to check the calendar at the precise moment
 that the next scheduled event is due.
 
 ```javascript
+//{ "name": "overview", "code": { "path": "'..'" }, "text": { "path": "'happenstance'" } }
 // Require the `Timer` class.
-const { Timer } = require('happenstance')
+const { Timer } = require(%(path)s)
 
 // Create a timer that will `setTimeout` for the next event in the given
 // calendar.

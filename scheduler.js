@@ -34,6 +34,15 @@ class Scheduler extends events.EventEmitter {
         return scheduled ? scheduled.when : null
     }
 
+    what (key) {
+        const scheduled = this._what[key]
+        return scheduled ? scheduled.body : null
+    }
+
+    get (key) {
+        return this._what[key] || null
+    }
+
     next () {
         return this._when.size ? this._when.min().when : null
     }
