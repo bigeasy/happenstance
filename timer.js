@@ -23,9 +23,8 @@ class Timer {
     }
 
     _check () {
-        var now = Date.now()
         this._timeout = null
-        this._calendar.check(now)
+        this._calendar.check(Date.now())
     }
 
     _unset () {

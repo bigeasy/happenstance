@@ -89,8 +89,9 @@ class Calendar extends events.EventEmitter {
     }
 
     check (now) {
+        let min
         for (;;) {
-            var min = this._when.min()
+            min = this._when.min()
             if (!min || min.when > now) {
                 break
             }
