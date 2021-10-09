@@ -1,2 +1,2 @@
-exports.Scheduler = require('./scheduler')
+exports.Calendar = require('./calendar')
 exports.Timer = require('./timer')

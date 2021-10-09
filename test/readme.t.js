@@ -58,7 +58,7 @@ require('proof')(13, async okay => {
         // there are any events whose scheduled timestamp is at or before the check
         // timestamp those events are emitted from the `'data'` event.
 
-        const { Scheduler: Calendar } = require('..')
+        const { Calendar } = require('..')
 
         // Create a new calendar.
         const calendar = new Calendar

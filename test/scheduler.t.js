@@ -1,18 +1,18 @@
 require('proof')(26, (okay) => {
-    const Scheduler = require('..').Scheduler
+    const { Calendar } = require('..')
     {
-        const scheduler = new Scheduler
-        okay(scheduler.next(), null, 'nothing scheduled')
-        okay(scheduler.when('x'), null, 'not scheduled')
+        const calendar = new Calendar
+        okay(calendar.next(), null, 'nothing scheduled')
+        okay(calendar.when('x'), null, 'not scheduled')
     }
     {
-        const scheduler = new Scheduler
+        const calendar = new Calendar
         const test = []
-        scheduler.on('set', when => test.push(when))
-        scheduler.schedule(1, 'x', 'X')
-        okay(scheduler.next(), 1, 'something scheduled')
-        okay(scheduler.when('x'), 1, 'x scheduled')
-        okay(scheduler.calendar(), [{
+        calendar.on('set', when => test.push(when))
+        calendar.schedule(1, 'x', 'X')
+        okay(calendar.next(), 1, 'something scheduled')
+        okay(calendar.when('x'), 1, 'x scheduled')
+        okay(calendar.calendar(), [{
             when: 1,
             key: 'x',
             body: 'X'
@@ -21,75 +21,75 @@ require('proof')(26, (okay) => {
     }
     {
         const test = []
-        const scheduler = new Scheduler
-        scheduler.on('set', when => test.push(when))
-        scheduler.schedule(1, 'x', 'X')
-        scheduler.schedule(1, 'y', 'Y')
-        scheduler.schedule(2, 'z', 'Z')
-        okay(scheduler.next(), 1, 'something scheduled')
+        const calendar = new Calendar
+        calendar.on('set', when => test.push(when))
+        calendar.schedule(1, 'x', 'X')
+        calendar.schedule(1, 'y', 'Y')
+        calendar.schedule(2, 'z', 'Z')
+        okay(calendar.next(), 1, 'something scheduled')
         okay(test, [ 1 ], 'dot not reset the timer on schedule if not necessary')
     }
     {
         const test = []
-        const scheduler = new Scheduler
-        scheduler.on('set', when => test.push(when))
-        scheduler.on('unset', () => test.push('unset'))
-        scheduler.schedule(1, 'x', 'X')
-        okay(scheduler.next(), 1, 'something scheduled')
-        scheduler.unschedule('x')
-        okay(scheduler.next(), null, 'nothing scheduled')
+        const calendar = new Calendar
+        calendar.on('set', when => test.push(when))
+        calendar.on('unset', () => test.push('unset'))
+        calendar.schedule(1, 'x', 'X')
+        okay(calendar.next(), 1, 'something scheduled')
+        calendar.unschedule('x')
+        okay(calendar.next(), null, 'nothing scheduled')
         okay(test, [ 1, 'unset' ], 'unschedule an event')
     }
     {
         const test = []
-        const scheduler = new Scheduler
-        scheduler.on('set', when => test.push(when))
-        scheduler.on('unset', () => test.push('unset'))
-        scheduler.schedule(1, 'x', 'X')
-        scheduler.schedule(2, 'y', 'Y')
-        okay(scheduler.next(), 1, 'something scheduled')
-        scheduler.unschedule('x')
-        okay(scheduler.next(), 2, 'rescheduled')
+        const calendar = new Calendar
+        calendar.on('set', when => test.push(when))
+        calendar.on('unset', () => test.push('unset'))
+        calendar.schedule(1, 'x', 'X')
+        calendar.schedule(2, 'y', 'Y')
+        okay(calendar.next(), 1, 'something scheduled')
+        calendar.unschedule('x')
+        okay(calendar.next(), 2, 'rescheduled')
         okay(test, [ 1, 2 ], 'reset time on unschedule')
     }
     {
         const test = []
-        const scheduler = new Scheduler
-        scheduler.on('set', when => test.push(when))
-        scheduler.on('unset', () => test.push('unset'))
-        scheduler.schedule(1, 'x', 'X')
-        scheduler.schedule(2, 'y', 'Y')
-        okay(scheduler.next(), 1, 'something scheduled')
-        scheduler.unschedule('y')
-        okay(scheduler.next(), 1, 'same schedule')
+        const calendar = new Calendar
+        calendar.on('set', when => test.push(when))
+        calendar.on('unset', () => test.push('unset'))
+        calendar.schedule(1, 'x', 'X')
+        calendar.schedule(2, 'y', 'Y')
+        okay(calendar.next(), 1, 'something scheduled')
+        calendar.unschedule('y')
+        okay(calendar.next(), 1, 'same schedule')
         okay(test, [ 1 ], 'dot not reset timer on unschedule')
     }
     {
         const test = []
-        const scheduler = new Scheduler
-        scheduler.on('set', when => test.push(when))
-        scheduler.on('unset', () => test.push('unset'))
-        scheduler.on('data', data => test.push(data))
-        scheduler.schedule(1, 'x', 'X')
-        scheduler.schedule(2, 'y', 'Y')
-        okay(scheduler.next(), 1, 'something scheduled')
-        scheduler.check(1)
-        okay(scheduler.next(), 2, 'new schedule')
+        const calendar = new Calendar
+        calendar.on('set', when => test.push(when))
+        calendar.on('unset', () => test.push('unset'))
+        calendar.on('data', data => test.push(data))
+        calendar.schedule(1, 'x', 'X')
+        calendar.schedule(2, 'y', 'Y')
+        okay(calendar.next(), 1, 'something scheduled')
+        calendar.check(1)
+        okay(calendar.next(), 2, 'new schedule')
         okay(test, [
             1, { key: 'x', body: 'X', now: 1, when: 1 }, 2
         ], 'check for events')
     }
     {
         const test = []
-        const scheduler = new Scheduler
-        scheduler.on('set', when => test.push(when))
-        scheduler.on('unset', () => test.push('unset'))
-        scheduler.on('data', data => test.push(data))
-        scheduler.schedule(1, 'x', 'X')
-        scheduler.schedule(2, 'y', 'Y')
-        okay(scheduler.next(), 1, 'something scheduled')
-        scheduler.check(2)
-        okay(scheduler.next(), null, 'no schedule')
+        const calendar = new Calendar
+        calendar.on('set', when => test.push(when))
+        calendar.on('unset', () => test.push('unset'))
+        calendar.on('data', data => test.push(data))
+        calendar.schedule(1, 'x', 'X')
+        calendar.schedule(2, 'y', 'Y')
+        okay(calendar.next(), 1, 'something scheduled')
+        calendar.check(2)
+        okay(calendar.next(), null, 'no schedule')
         okay(test, [
             1,
             { key: 'x', body: 'X', now: 2, when: 1 },
@@ -99,15 +99,15 @@ require('proof')(26, (okay) => {
     }
     {
         const test = []
-        const scheduler = new Scheduler
-        scheduler.on('set', when => test.push(when))
-        scheduler.on('unset', () => test.push('unset'))
-        scheduler.on('data', data => test.push(data))
-        scheduler.schedule(1, 'x', 'X')
-        scheduler.schedule(2, 'y', 'Y')
-        okay(scheduler.next(), 1, 'something scheduled')
-        scheduler.clear()
-        okay(scheduler.next(), null, 'no schedule')
+        const calendar = new Calendar
+        calendar.on('set', when => test.push(when))
+        calendar.on('unset', () => test.push('unset'))
+        calendar.on('data', data => test.push(data))
+        calendar.schedule(1, 'x', 'X')
+        calendar.schedule(2, 'y', 'Y')
+        okay(calendar.next(), 1, 'something scheduled')
+        calendar.clear()
+        okay(calendar.next(), null, 'no schedule')
         okay(test, [ 1, 'unset' ], 'clear all events')
     }
 })

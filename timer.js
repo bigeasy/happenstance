@@ -1,5 +1,5 @@
 class Timer {
-    constructor (scheduler) {
+    constructor (calendar) {
         this._listeners = {
             set: (when) => {
                 const now = Date.now()
@@ -9,23 +9,23 @@ class Timer {
             unset: () => this._unset()
         }
         for (const listener in this._listeners) {
-            scheduler.on(listener, this._listeners[listener])
+            calendar.on(listener, this._listeners[listener])
         }
         this._timeout = null
-        this._scheduler = scheduler
+        this._calendar = calendar
     }
 
     destroy () {
         this._unset()
         for (const listener in this._listeners) {
-            this._scheduler.removeListener(listener, this._listeners[listener])
+            this._calendar.removeListener(listener, this._listeners[listener])
         }
     }
 
     _check () {
         var now = Date.now()
         this._timeout = null
-        this._scheduler.check(now)
+        this._calendar.check(now)
     }
 
     _unset () {

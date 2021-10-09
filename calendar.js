@@ -7,13 +7,13 @@ const RBTree = require('bintrees').RBTree
 
 const comparator = require('./comparator')
 
-// Our scheduler emits two types of events through its `events` queue. It does
+// Our calendar emits two types of events through its `events` queue. It does
 // not maintain a timer itself, nor does it check the system clock, but instead
 // emits events based on timestamps given to it. This allows you to have a timer
 // whose events can be recorded and replayed.
 
 //
-class Scheduler extends events.EventEmitter {
+class Calendar extends events.EventEmitter {
     constructor () {
         super()
         this._what = {}
@@ -112,4 +112,4 @@ class Scheduler extends events.EventEmitter {
     }
 }
 
-module.exports = Scheduler
+module.exports = Calendar

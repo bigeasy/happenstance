@@ -80,7 +80,7 @@ there are any events whose scheduled timestamp is at or before the check
 timestamp those events are emitted from the `'data'` event.
 
 ```javascript
-const { Scheduler: Calendar } = require('happenstance')
+const { Calendar } = require('happenstance')
 
 // Create a new calendar.
 const calendar = new Calendar

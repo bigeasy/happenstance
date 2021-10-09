@@ -97,7 +97,7 @@ timestamp those events are emitted from the `'data'` event.
 
 ```javascript
 //{ "name": "overview", "code": { "path": "'..'" }, "text": { "path": "'happenstance'" } }
-const { Scheduler: Calendar } = require(%(path)s)
+const { Calendar } = require(%(path)s)
 
 // Create a new calendar.
 const calendar = new Calendar
